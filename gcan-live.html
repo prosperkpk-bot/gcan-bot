@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCAN Church Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--gold-dim:#8a6f2e;--deep:#0D1117;--bubble-out:#1A3A2A;--bubble-in:#1E2530;--text:#E8E6E1;--text-dim:#8B8880;--green:#25D366;--wa-header:#111B21;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--deep);font-family:'DM Sans',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:20px;}
+.phone-shell{position:relative;z-index:1;width:390px;max-width:100%;background:var(--deep);border-radius:40px;border:1.5px solid rgba(201,168,76,0.2);box-shadow:0 0 0 6px rgba(0,0,0,0.4),0 40px 80px rgba(0,0,0,0.7);overflow:hidden;display:flex;flex-direction:column;height:780px;}
+.wa-header{background:var(--wa-header);padding:50px 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.05);flex-shrink:0;}
+.back-btn{color:var(--green);font-size:22px;cursor:pointer;}
+.avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--deep);box-shadow:0 0 12px rgba(201,168,76,0.3);}
+.contact-info{flex:1;}
+.contact-name{font-family:'Playfair Display',serif;font-size:15px;color:var(--text);}
+.contact-status{font-size:12px;color:var(--green);margin-top:1px;}
+.header-icons{display:flex;gap:18px;color:var(--text-dim);font-size:18px;}
+.chat-area{flex:1;overflow-y:auto;padding:12px 16px 8px;background:#0B141A;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth;}
+.chat-area::-webkit-scrollbar{width:3px;}
+.chat-area::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.2);border-radius:2px;}
+.date-divider{text-align:center;margin:8px 0;}
+.date-divider span{background:rgba(11,20,26,0.85);border:1px solid rgba(201,168,76,0.15);color:var(--text-dim);font-size:11px;padding:3px 10px;border-radius:6px;}
+.msg{max-width:78%;padding:8px 12px 6px;border-radius:8px;font-size:14px;line-height:1.5;color:var(--text);animation:bubblePop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;word-break:break-word;}
+@keyframes bubblePop{from{opacity:0;transform:scale(0.85) translateY(6px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.msg.out{align-self:flex-end;background:var(--bubble-out);border-radius:8px 2px 8px 8px;border:1px solid rgba(37,211,102,0.1);}
+.msg.in{align-self:flex-start;background:var(--bubble-in);border-radius:2px 8px 8px 8px;border:1px solid rgba(201,168,76,0.1);}
+.msg-time{font-size:10px;color:var(--text-dim);text-align:right;margin-top:3px;display:flex;align-items:center;justify-content:flex-end;gap:3px;}
+.msg.out .msg-time::after{content:'✓✓';color:var(--green);font-size:10px;}
+.typing-indicator{align-self:flex-start;background:var(--bubble-in);border:1px solid rgba(201,168,76,0.1);border-radius:2px 8px 8px 8px;padding:10px 14px;display:none;gap:5px;align-items:center;}
+.typing-indicator.visible{display:flex;}
+.dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:bounce 1.2s infinite;opacity:0.7;}
+.dot:nth-child(2){animation-delay:0.2s;}
+.dot:nth-child(3){animation-delay:0.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
+.quick-replies{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-self:flex-start;max-width:85%;}
+.qr-btn{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);color:var(--gold-light);font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 12px;border-radius:16px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.qr-btn:hover{background:rgba(201,168,76,0.2);border-color:var(--gold);}
+.welcome-banner{background:linear-gradient(135deg,rgba(201,168,76,0.12),rgba(37,211,102,0.05));border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:12px 14px;margin:4px 0 8px;align-self:center;max-width:90%;text-align:center;}
+.welcome-banner .cross{font-size:20px;margin-bottom:4px;}
+.welcome-banner p{font-size:11px;color:var(--text-dim);font-style:italic;}
+.welcome-banner strong{font-family:'Playfair Display',serif;color:var(--gold-light);font-size:13px;display:block;margin-bottom:2px;}
+.input-bar{background:var(--wa-header);padding:8px 12px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0;}
+.emoji-btn{color:var(--text-dim);font-size:20px;cursor:pointer;}
+.msg-input{flex:1;background:#2A3942;border:none;border-radius:20px;padding:9px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:none;max-height:100px;line-height:1.4;}
+.msg-input::placeholder{color:#667781;}
+.send-btn{width:42px;height:42px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;box-shadow:0 2px 8px rgba(201,168,76,0.3);}
+.send-btn svg{width:18px;height:18px;fill:#0D1117;}
+.demo-label{position:absolute;top:14px;right:20px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:10px;}
+</style>
+</head>
+<body>
+<div class="phone-shell">
+<span class="demo-label">Live</span>
+<div class="wa-header">
+<div class="back-btn">‹</div>
+<div class="avatar">GC</div>
+<div class="contact-info">
+<div class="contact-name">GCAN Assistant ✝</div>
+<div class="contact-status">● online</div>
+</div>
+<div class="header-icons"><span>📞</span><span>⋮</span></div>
+</div>
+<div class="chat-area" id="chatArea">
+<div class="date-divider"><span>Today</span></div>
+<div class="welcome-banner">
+<div class="cross">✝</div>
+<strong>Grace Church Of All Nations</strong>
+<p>Plot 73896 Phakalane Industrial | +267 71 548 786</p>
+</div>
+<div class="msg in">
+🙏 <strong>Shalom! Welcome to GCAN.</strong><br><br>
+I'm your church assistant. I can help you with service times, giving, prayer requests, joining a ministry, and more.<br><br>
+How can I serve you today?
+<div class="msg-time">09:00</div>
+</div>
+<div class="quick-replies" id="initialQR">
+<button class="qr-btn" onclick="sendQuick('Service Times')">📅 Service Times</button>
+<button class="qr-btn" onclick="sendQuick('Prayer Request')">🙏 Prayer Request</button>
+<button class="qr-btn" onclick="sendQuick('How to Give')">💰 How to Give</button>
+<button class="qr-btn" onclick="sendQuick('Join the Choir')">🎵 Join Choir</button>
+<button class="qr-btn" onclick="sendQuick('Church Location')">📍 Location</button>
+</div>
+<div class="typing-indicator" id="typingDot">
+<div class="dot"></div><div class="dot"></div><div class="dot"></div>
+</div>
+</div>
+<div class="input-bar">
+<span class="emoji-btn">😊</span>
+<textarea class="msg-input" id="msgInput" placeholder="Message" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+<button class="send-btn" onclick="sendMessage()">
+<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+</button>
+</div>
+</div>
+<script>
+const PROXY='https://ArtVenturesAfrica--50fec996714b11f195251607ee4eb77e.web.val.run';
+const SYS='You are the GCAN church assistant. Grace Church of All Nations. Plot 73896 Phakalane Industrial Botswana. Sunday 9AM-1PM Wednesday 6PM-8PM. FNB Account 63066895112 Orange Money +267 75 037 051. Apostle Chandie Mutsambiri contact +267 71 548 786. Ministries: Praise Team Choir Youth Ushers Sunday School Protocol. Deliverance and prophecy happen here. Bible believing church. Free to see the man of God. Replies must be short warm and faith-filled.';
+let history=[];
+function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function scrollToBottom(){const a=document.getElementById('chatArea');setTimeout(()=>a.scrollTop=a.scrollHeight,50);}
+function addMessage(text,type){const a=document.getElementById('chatArea');const t=document.getElementById('typingDot');const d=document.createElement('div');d.className='msg '+type;d.innerHTML=text+'<div class="msg-time">'+getTime()+'</div>';a.insertBefore(d,t);scrollToBottom();}
+function showTyping(){document.getElementById('typingDot').classList.add('visible');scrollToBottom();}
+function hideTyping(){document.getElementById('typingDot').classList.remove('visible');}
+function removeQR(){const q=document.getElementById('initialQR');if(q)q.remove();}
+async function sendQuick(t){removeQR();await process(t);}
+async function sendMessage(){const i=document.getElementById('msgInput');const t=i.value.trim();if(!t)return;i.value='';i.style.height='auto';removeQR();await process(t);}
+async function process(text){
+addMessage(text,'out');
+history.push({role:'user',content:text});
+showTyping();
+try{
+const r=await fetch(PROXY,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:SYS,messages:history})
+});
+const data=await r.json();
+const reply=data.content?.[0]?.text||"I'm sorry, please try again. 🙏";
+history.push({role:'assistant',content:reply});
+await new Promise(r=>setTimeout(r,600));
+hideTyping();
+addMessage(reply.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>'),'in');
+}catch(e){
+await new Promise(r=>setTimeout(r,400));
+hideTyping();
+addMessage("I'm sorry, please try again. 🙏",'in');
+}}
+document.getElementById('msgInput').focus();
+scrollToBottom();
+</script>
+</body>
+</html>
