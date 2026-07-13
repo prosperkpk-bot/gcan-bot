@@ -116,7 +116,7 @@ try{
 const r=await fetch(PROXY,{
 method:'POST',
 headers:{'Content-Type':'application/json'},
-body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,system:SYS,messages:history})
+body:JSON.stringify({model:'claude-sonnet-5-20250514',max_tokens:300,system:SYS,messages:history})
 });
 const data=await r.json();
 const reply=data.content?.[0]?.text||"I'm sorry, please try again. 🙏";
