@@ -119,7 +119,7 @@ headers:{'Content-Type':'application/json'},
 body:JSON.stringify({model:'claude-sonnet-5',max_tokens:300,system:SYS,messages:history})
 });
 const data=await r.json();
-const reply=|const reply=data.content?.find(b=>b.type==='text')?.text||"I'm sorry, please try again. 🙏";|"I'm sorry, please try again. 🙏";
+const reply=data.content?.find(b=>b.type==='text')?.text||"I'm sorry, please try again. 🙏";
 history.push({role:'assistant',content:reply});
 await new Promise(r=>setTimeout(r,600));
 hideTyping();
